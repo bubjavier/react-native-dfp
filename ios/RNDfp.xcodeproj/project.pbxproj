@@ -7,7 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B3E7B58A1CC2AC0600A0062D /* RNDfp.m in Sources */ = {isa = PBXBuildFile; fileRef = B3E7B5891CC2AC0600A0062D /* RNDfp.m */; };
+		1A37580A1F212AEB00C57EA5 /* RNDFPBannerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A3758091F212AEB00C57EA5 /* RNDFPBannerView.m */; };
+		1A3758101F2134A300C57EA5 /* RNDFPBannerManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A37580F1F2134A300C57EA5 /* RNDFPBannerManager.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -24,8 +25,10 @@
 
 /* Begin PBXFileReference section */
 		134814201AA4EA6300B7C361 /* libRNDfp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libRNDfp.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3E7B5881CC2AC0600A0062D /* RNDfp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNDfp.h; sourceTree = "<group>"; };
-		B3E7B5891CC2AC0600A0062D /* RNDfp.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNDfp.m; sourceTree = "<group>"; };
+		1A3758081F212AEB00C57EA5 /* RNDFPBannerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNDFPBannerView.h; sourceTree = "<group>"; };
+		1A3758091F212AEB00C57EA5 /* RNDFPBannerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNDFPBannerView.m; sourceTree = "<group>"; };
+		1A37580E1F2134A300C57EA5 /* RNDFPBannerManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RNDFPBannerManager.h; sourceTree = "<group>"; };
+		1A37580F1F2134A300C57EA5 /* RNDFPBannerManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RNDFPBannerManager.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -50,8 +53,10 @@
 		58B511D21A9E6C8500147676 = {
 			isa = PBXGroup;
 			children = (
-				B3E7B5881CC2AC0600A0062D /* RNDfp.h */,
-				B3E7B5891CC2AC0600A0062D /* RNDfp.m */,
+				1A37580E1F2134A300C57EA5 /* RNDFPBannerManager.h */,
+				1A37580F1F2134A300C57EA5 /* RNDFPBannerManager.m */,
+				1A3758081F212AEB00C57EA5 /* RNDFPBannerView.h */,
+				1A3758091F212AEB00C57EA5 /* RNDFPBannerView.m */,
 				134814211AA4EA7D00B7C361 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -112,7 +117,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3E7B58A1CC2AC0600A0062D /* RNDfp.m in Sources */,
+				1A3758101F2134A300C57EA5 /* RNDFPBannerManager.m in Sources */,
+				1A37580A1F212AEB00C57EA5 /* RNDFPBannerView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -196,8 +202,9 @@
 		58B511F01A9E6C8500147676 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../../../ios/Pods/**";
 				HEADER_SEARCH_PATHS = (
-				"$(inherited)",
+					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/../../../React/**",
 					"$(SRCROOT)/../../react-native/React/**",
@@ -212,6 +219,7 @@
 		58B511F11A9E6C8500147676 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/../../../ios/Pods/**";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,

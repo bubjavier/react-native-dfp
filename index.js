@@ -1,6 +1,9 @@
 
-import { NativeModules } from 'react-native';
+import {
+  NativeModules,
+} from 'react-native';
 
-const { RNDfp } = NativeModules;
+import DFPBanner from './RNDFPBanner';
+// import DFPInterstitial from './RNDFPInterstitial';
 
-export default RNDfp;
+module.exports = { DFPBanner };
