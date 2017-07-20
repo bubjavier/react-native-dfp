@@ -1,5 +1,8 @@
+[![npm version](https://badge.fury.io/js/react-native-dfp.svg)](https://badge.fury.io/js/react-native-dfp)
 
 # react-native-dfp
+
+Unofficial fork from Simon Bugert's [react-native-admob](https://github.com/sbugert/react-native-admob/tree/980386052d780e42042bf8127cd1048549fe7773), but only implementing Google Mobile Ads' DFP libraries.
 
 ## Getting started
 
