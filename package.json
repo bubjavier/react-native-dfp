@@ -1,6 +1,6 @@
 {
   "name": "react-native-dfp",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "React Native bridge for Google DFP",
   "main": "index.js",
   "scripts": {

@@ -11,7 +11,7 @@
 
 RCT_EXPORT_MODULE();
 
-- (UIView *)bannerView
+- (UIView *)view
 {
     return [[RNDFPBannerView alloc] init];
 }
@@ -33,10 +33,5 @@ RCT_EXPORT_VIEW_PROPERTY(onAdViewWillPresentScreen, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onAdViewWillDismissScreen, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onAdViewDidDismissScreen, RCTBubblingEventBlock)
 RCT_EXPORT_VIEW_PROPERTY(onAdViewWillLeaveApplication, RCTBubblingEventBlock)
-
-RCT_EXPORT_METHOD(show)
-{
-    NSLog(@"Pretending to fetch and display DFP Banner ads...");
-}
 
 @end
