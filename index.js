@@ -3,7 +3,7 @@ import {
   NativeModules,
 } from 'react-native';
 
-import DFPBanner from './RNDFPBanner';
-// import DFPInterstitial from './RNDFPInterstitial';
+import Banner from './RNDFPBanner';
+import Interstitial from './RNDFPInterstitial';
 
-module.exports = { DFPBanner };
+module.exports = { Banner, Interstitial };
