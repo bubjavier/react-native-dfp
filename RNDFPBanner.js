@@ -84,5 +84,8 @@ DFPBanner.propTypes = {
   ...View.propTypes,
 };
 
-DFPBanner.defaultProps = { bannerSize: 'smartBannerPortrait', didFailToReceiveAdWithError: () => {} ,
-admobDispatchAppEvent: () => {}};
+DFPBanner.defaultProps = {
+    bannerSize: 'smartBannerPortrait',
+    didFailToReceiveAdWithError: () => {},
+    admobDispatchAppEvent: () => {}
+};
