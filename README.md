@@ -114,6 +114,9 @@ admobDispatchAppEvent: React.PropTypes.func,
 ```javascript
 import { Interstitial } from 'react-native-dfp';
 
-// TODO
+// Initialize your interstitial (usually during start of game.. etc.)
+Interstitial.loadAdFromAdUnitId('{adUnitId}');
 
+// Then on your trigger function (e.g. game over page) or desired callback, call this.
+Interstitial.showAd();
 ```
