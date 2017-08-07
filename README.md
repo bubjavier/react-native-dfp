@@ -47,10 +47,73 @@ Unofficial fork from Simon Bugert's [react-native-admob](https://github.com/sbug
 
 
 ## Usage
-```javascript
-import RNDfp from 'react-native-dfp';
 
-// TODO: What to do with the module?
-RNDfp;
+### Display a banner
+
+```javascript
+import { RNBanner } from 'react-native-dfp';
+
+// To display a banner
+<RNBanner
+  style={this.state.style}
+  onSizeChange={this.onSizeChange.bind(this)}
+  onAdViewDidReceiveAd={this.props.adViewDidReceiveAd}
+  onDidFailToReceiveAdWithError={(event) => didFailToReceiveAdWithError(event.nativeEvent.error)}
+  onAdViewWillPresentScreen={this.props.adViewWillPresentScreen}
+  onAdViewWillDismissScreen={this.props.adViewWillDismissScreen}
+  onAdViewDidDismissScreen={this.props.adViewDidDismissScreen}
+  onAdViewWillLeaveApplication={this.props.adViewWillLeaveApplication}
+  onAdmobDispatchAppEvent={(event) => admobDispatchAppEvent(event)}
+  testDeviceID={testDeviceID}
+  adUnitID={adUnitID}
+  bannerSize={bannerSize} />
+
 ```
-  
+
+#### Properties:
+```
+/**
+ * DFP library banner size constants
+ * (https://developers.google.com/mobile-ads-sdk/docs/dfp/android/banner#banner_sizes)
+ * banner (320x50, Standard Banner for Phones and Tablets)
+ * largeBanner (320x100, Large Banner for Phones and Tablets)
+ * mediumRectangle (300x250, IAB Medium Rectangle for Phones and Tablets)
+ * fullBanner (468x60, IAB Full-Size Banner for Tablets)
+ * leaderboard (728x90, IAB Leaderboard for Tablets)
+ * smartBannerPortrait (Screen width x 32|50|90, Smart Banner for Phones and Tablets) (default)
+ * smartBannerLandscape (Screen width x 32|50|90, Smart Banner for Phones and Tablets)
+ *
+ * banner is default
+ */
+bannerSize: React.PropTypes.string,
+
+/**
+ * DFP ad unit ID
+ */
+adUnitID: React.PropTypes.string,
+
+/**
+ * Test device ID
+ */
+testDeviceID: React.PropTypes.string,
+
+/**
+ * DFP iOS (?) library events
+ */
+adViewDidReceiveAd: React.PropTypes.func,
+didFailToReceiveAdWithError: React.PropTypes.func,
+adViewWillPresentScreen: React.PropTypes.func,
+adViewWillDismissScreen: React.PropTypes.func,
+adViewDidDismissScreen: React.PropTypes.func,
+adViewWillLeaveApplication: React.PropTypes.func,
+admobDispatchAppEvent: React.PropTypes.func,
+```
+
+### Display an Interstitial
+
+```javascript
+import { Interstitial } from 'react-native-dfp';
+
+// TODO
+
+```
