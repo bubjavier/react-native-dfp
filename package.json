@@ -15,6 +15,8 @@
   "peerDependencies": {
     "react-native": ">=0.40.0",
     "react-native-windows": "0.41.0-rc.1"
-
+  },
+  "dependencies": {
+    "proptypes": "^1.1.0"
   }
 }
