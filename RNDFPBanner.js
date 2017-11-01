@@ -45,7 +45,7 @@ export default class DFPBanner extends React.Component {
 }
 
 DFPBanner.propTypes = {
-  style: View.propTypes.style,
+  // style: View.propTypes.style,
 
   /**
    * AdMob iOS library banner size constants
@@ -82,7 +82,7 @@ DFPBanner.propTypes = {
   adViewDidDismissScreen: PropTypes.func,
   adViewWillLeaveApplication: PropTypes.func,
   admobDispatchAppEvent: PropTypes.func,
-  ...View.propTypes,
+  // ...View.propTypes,
 };
 
 DFPBanner.defaultProps = {
