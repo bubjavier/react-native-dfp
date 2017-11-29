@@ -4,10 +4,12 @@
 #import <React/RCTBridgeModule.h>
 #import <React/UIView+React.h>
 #import <React/RCTLog.h>
+#import <React/RCTConvert.h>
 #else
 #import "RCTBridgeModule.h"
 #import "UIView+React.h"
 #import "RCTLog.h"
+#import "RCTConvert.h"
 #endif
 
 @implementation RNDFPBannerView {
@@ -49,8 +51,22 @@
 }
 
 -(void)loadBanner {
-    if (_adUnitID && _bannerSize) {
-        GADAdSize size = [self getAdSizeFromString:_bannerSize];
+    if (_adUnitID && (_bannerSize || _dimensions)) {
+        GADAdSize size;
+
+        if (_dimensions) {
+            NSNumber *width = [RCTConvert NSNumber:_dimensions[@"width"]];
+            NSNumber *height = [RCTConvert NSNumber:_dimensions[@"height"]];
+
+            CGFloat widthVal = [width doubleValue];
+            CGFloat heightVal = [height doubleValue];
+
+            CGSize cgSize = CGSizeMake(widthVal, heightVal);
+
+            size = GADAdSizeFromCGSize(cgSize);
+        } else {
+            size = [self getAdSizeFromString:_bannerSize];
+        }
         _bannerView = [[DFPBannerView alloc] initWithAdSize:size];
         [_bannerView setAppEventDelegate:self]; //added Admob event dispatch listener
         if(!CGRectEqualToRect(self.bounds, _bannerView.bounds)) {
@@ -72,11 +88,10 @@
                 request.testDevices = @[_testDeviceID];
             }
         }
-        
+
         [_bannerView loadRequest:request];
     }
 }
-
 
 - (void)adView:(DFPBannerView *)banner
 didReceiveAppEvent:(NSString *)name
@@ -86,6 +101,17 @@ didReceiveAppEvent:(NSString *)name
     myDictionary[name] = info;
     if (self.onAdmobDispatchAppEvent) {
         self.onAdmobDispatchAppEvent(@{ name: info });
+    }
+}
+
+- (void)setDimensions:(NSDictionary *)dimensions
+{
+    if(![dimensions isEqual:_dimensions]) {
+        _dimensions = dimensions;
+        if (_bannerView) {
+            [_bannerView removeFromSuperview];
+        }
+        [self loadBanner];
     }
 }
 
@@ -107,7 +133,6 @@ didReceiveAppEvent:(NSString *)name
         if (_bannerView) {
             [_bannerView removeFromSuperview];
         }
-        
         [self loadBanner];
     }
 }
@@ -125,7 +150,7 @@ didReceiveAppEvent:(NSString *)name
 -(void)layoutSubviews
 {
     [super layoutSubviews ];
-    
+
     _bannerView.frame = CGRectMake(
                                    self.bounds.origin.x,
                                    self.bounds.origin.x,

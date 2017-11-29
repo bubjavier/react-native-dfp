@@ -23,7 +23,17 @@ export default class DFPBanner extends React.Component {
   }
 
   render() {
-    const { adUnitID, testDeviceID, bannerSize, style, didFailToReceiveAdWithError,admobDispatchAppEvent } = this.props;
+    const { adUnitID, testDeviceID, dimensions, style, didFailToReceiveAdWithError, admobDispatchAppEvent } = this.props;
+    let { bannerSize } = this.props;
+
+    if (!bannerSize && (!dimensions || !dimensions.width || !dimensions.height)) {
+      bannerSize = 'smartBannerPortrait';
+    }
+
+    if (bannerSize && dimensions && dimensions.width && dimensions.height) {
+      bannerSize = null;
+    }
+
     return (
       <View style={this.props.style}>
         <RNBanner
@@ -36,6 +46,7 @@ export default class DFPBanner extends React.Component {
           onAdViewDidDismissScreen={this.props.adViewDidDismissScreen}
           onAdViewWillLeaveApplication={this.props.adViewWillLeaveApplication}
           onAdmobDispatchAppEvent={(event) => admobDispatchAppEvent(event)}
+          dimensions={dimensions}
           testDeviceID={testDeviceID}
           adUnitID={adUnitID}
           bannerSize={bannerSize} />
@@ -63,6 +74,14 @@ DFPBanner.propTypes = {
   bannerSize: PropTypes.string,
 
   /**
+   * Custom banner size (instead of using bannerSize)
+   */
+  dimensions: PropTypes.shape({
+    height: PropTypes.number,
+    width: PropTypes.number,
+  }),
+
+  /**
    * AdMob ad unit ID
    */
   adUnitID: PropTypes.string,
@@ -86,7 +105,6 @@ DFPBanner.propTypes = {
 };
 
 DFPBanner.defaultProps = {
-    bannerSize: 'smartBannerPortrait',
     didFailToReceiveAdWithError: () => {},
     admobDispatchAppEvent: () => {}
 };

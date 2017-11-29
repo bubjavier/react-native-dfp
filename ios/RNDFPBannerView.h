@@ -10,6 +10,7 @@
 
 @interface RNDFPBannerView : UIView <GADBannerViewDelegate>
 
+@property (nonatomic, copy) NSDictionary *dimensions;
 @property (nonatomic, copy) NSString *bannerSize;
 @property (nonatomic, copy) NSString *adUnitID;
 @property (nonatomic, copy) NSString *testDeviceID;
