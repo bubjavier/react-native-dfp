@@ -24,14 +24,22 @@ export default class DFPBanner extends React.Component {
 
   render() {
     const { adUnitID, testDeviceID, dimensions, style, didFailToReceiveAdWithError, admobDispatchAppEvent } = this.props;
-    let { bannerSize } = this.props;
+    let { bannerSize, adSizes } = this.props;
 
-    if (!bannerSize && (!dimensions || !dimensions.width || !dimensions.height)) {
-      bannerSize = 'smartBannerPortrait';
+    // Dimensions gets highest priority
+    if (dimensions && dimensions.width && dimensions.height) {
+      bannerSize = undefined;
+      adSizes = undefined;
     }
 
-    if (bannerSize && dimensions && dimensions.width && dimensions.height) {
-      bannerSize = null;
+    // AdSizes gets second priority
+    if (adSizes && adSizes.length > 0) {
+      bannerSize = undefined;
+    }
+
+    // Default to something if nothing is set
+    if (!bannerSize && (!dimensions || !dimensions.width || !dimensions.height) && (!adSizes || !adSizes.length > 0)) {
+       bannerSize = 'smartBannerPortrait';
     }
 
     return (
@@ -46,6 +54,7 @@ export default class DFPBanner extends React.Component {
           onAdViewDidDismissScreen={this.props.adViewDidDismissScreen}
           onAdViewWillLeaveApplication={this.props.adViewWillLeaveApplication}
           onAdmobDispatchAppEvent={(event) => admobDispatchAppEvent(event)}
+          adSizes={adSizes}
           dimensions={dimensions}
           testDeviceID={testDeviceID}
           adUnitID={adUnitID}
@@ -80,6 +89,12 @@ DFPBanner.propTypes = {
     height: PropTypes.number,
     width: PropTypes.number,
   }),
+
+  /**
+   * Array of some combination of bannerSize and dimensions that are valid for the ad
+   * Example: ['mediumRectangle', { width: 320, height: 400 }, 'smartBannerPortrait']
+   */
+  adSizes: PropTypes.array,
 
   /**
    * AdMob ad unit ID

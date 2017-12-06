@@ -21,6 +21,7 @@ RCT_EXPORT_MODULE();
     return dispatch_get_main_queue();
 }
 
+RCT_EXPORT_VIEW_PROPERTY(adSizes, NSArray);
 RCT_EXPORT_VIEW_PROPERTY(dimensions, NSDictionary);
 RCT_EXPORT_VIEW_PROPERTY(bannerSize, NSString);
 RCT_EXPORT_VIEW_PROPERTY(adUnitID, NSString);

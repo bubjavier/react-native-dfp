@@ -51,8 +51,9 @@
 }
 
 -(void)loadBanner {
-    if (_adUnitID && (_bannerSize || _dimensions)) {
+    if (_adUnitID && (_bannerSize || _dimensions || _adSizes)) {
         GADAdSize size;
+        NSMutableArray *validAdSizes;
 
         if (_dimensions) {
             NSNumber *width = [RCTConvert NSNumber:_dimensions[@"width"]];
@@ -65,21 +66,71 @@
 
             size = GADAdSizeFromCGSize(cgSize);
         } else {
-            size = [self getAdSizeFromString:_bannerSize];
+            if (_adSizes) {
+                validAdSizes = [[NSMutableArray alloc] init];
+                for (id anAdSize in _adSizes) {
+                    GADAdSize aSize;
+
+                    // BannerSize
+                    if ([anAdSize isKindOfClass:[NSString class]]) {
+                        NSString *stringAdSize = (NSString *)anAdSize;
+
+                        aSize = [self getAdSizeFromString:stringAdSize];
+
+                        [validAdSizes addObject:NSValueFromGADAdSize(aSize)];
+
+                        // Set size to the first one in the list
+                        if (CGSizeEqualToSize(CGSizeFromGADAdSize(size), CGSizeMake(0.0, 0.0))) {
+                            size = aSize;
+                        }
+                    }
+
+                    // Dimensions
+                    if ([anAdSize isKindOfClass:[NSDictionary class]]) {
+                        NSDictionary *dictionaryAdSize = (NSDictionary *)anAdSize;
+
+                        NSNumber *width = [RCTConvert NSNumber:dictionaryAdSize[@"width"]];
+                        NSNumber *height = [RCTConvert NSNumber:dictionaryAdSize[@"height"]];
+
+                        CGFloat widthVal = [width doubleValue];
+                        CGFloat heightVal = [height doubleValue];
+
+                        CGSize cgSize = CGSizeMake(widthVal, heightVal);
+
+                        aSize = GADAdSizeFromCGSize(cgSize);
+
+                        [validAdSizes addObject:NSValueFromGADAdSize(aSize)];
+
+                        // Set size to the first one in the list
+                        if (CGSizeEqualToSize(CGSizeFromGADAdSize(size), CGSizeMake(0.0, 0.0))) {
+                            size = aSize;
+                        }
+                    }
+                }
+            } else {
+                size = [self getAdSizeFromString:_bannerSize];
+            }
         }
+
         _bannerView = [[DFPBannerView alloc] initWithAdSize:size];
         [_bannerView setAppEventDelegate:self]; //added Admob event dispatch listener
-        if(!CGRectEqualToRect(self.bounds, _bannerView.bounds)) {
+        // if(!CGRectEqualToRect(self.bounds, _bannerView.bounds)) {
             if (self.onSizeChange) {
                 self.onSizeChange(@{
                                     @"width": [NSNumber numberWithFloat: _bannerView.bounds.size.width],
                                     @"height": [NSNumber numberWithFloat: _bannerView.bounds.size.height]
                                     });
             }
-        }
+        // }
         _bannerView.delegate = self;
+        _bannerView.adSizeDelegate = self;
         _bannerView.adUnitID = _adUnitID;
         _bannerView.rootViewController = [UIApplication sharedApplication].delegate.window.rootViewController;
+
+        if (validAdSizes) {
+          _bannerView.validAdSizes = validAdSizes;
+        }
+
         GADRequest *request = [GADRequest request];
         if(_testDeviceID) {
             if([_testDeviceID isEqualToString:@"EMULATOR"]) {
@@ -101,6 +152,17 @@ didReceiveAppEvent:(NSString *)name
     myDictionary[name] = info;
     if (self.onAdmobDispatchAppEvent) {
         self.onAdmobDispatchAppEvent(@{ name: info });
+    }
+}
+
+- (void)setAdSizes:(NSArray *)adSizes
+{
+    if(![adSizes isEqual:_adSizes]) {
+        _adSizes = adSizes;
+        if (_bannerView) {
+            [_bannerView removeFromSuperview];
+        }
+        [self loadBanner];
     }
 }
 
@@ -162,6 +224,17 @@ didReceiveAppEvent:(NSString *)name
 - (void)removeFromSuperview
 {
     [super removeFromSuperview];
+}
+
+/// Called before the ad view changes to the new size.
+- (void)adView:(DFPBannerView *)bannerView
+willChangeAdSizeTo:(GADAdSize)size {
+    if (self.onWillChangeAdSizeTo) {
+        // bannerView calls this method on its adSizeDelegate object before the banner updates it size,
+        // allowing the application to adjust any views that may be affected by the new ad size.
+        self.onWillChangeAdSizeTo(@{});
+    }
+
 }
 
 /// Tells the delegate an ad request loaded an ad.
