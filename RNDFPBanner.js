@@ -23,7 +23,25 @@ export default class DFPBanner extends React.Component {
   }
 
   render() {
-    const { adUnitID, testDeviceID, bannerSize, style, didFailToReceiveAdWithError,admobDispatchAppEvent } = this.props;
+    const { adUnitID, testDeviceID, dimensions, style, didFailToReceiveAdWithError, admobDispatchAppEvent } = this.props;
+    let { bannerSize, adSizes } = this.props;
+
+    // Dimensions gets highest priority
+    if (dimensions && dimensions.width && dimensions.height) {
+      bannerSize = undefined;
+      adSizes = undefined;
+    }
+
+    // AdSizes gets second priority
+    if (adSizes && adSizes.length > 0) {
+      bannerSize = undefined;
+    }
+
+    // Default to something if nothing is set
+    if (!bannerSize && (!dimensions || !dimensions.width || !dimensions.height) && (!adSizes || !adSizes.length > 0)) {
+       bannerSize = 'smartBannerPortrait';
+    }
+
     return (
       <View style={this.props.style}>
         <RNBanner
@@ -36,6 +54,8 @@ export default class DFPBanner extends React.Component {
           onAdViewDidDismissScreen={this.props.adViewDidDismissScreen}
           onAdViewWillLeaveApplication={this.props.adViewWillLeaveApplication}
           onAdmobDispatchAppEvent={(event) => admobDispatchAppEvent(event)}
+          adSizes={adSizes}
+          dimensions={dimensions}
           testDeviceID={testDeviceID}
           adUnitID={adUnitID}
           bannerSize={bannerSize} />
@@ -63,6 +83,20 @@ DFPBanner.propTypes = {
   bannerSize: PropTypes.string,
 
   /**
+   * Custom banner size (instead of using bannerSize)
+   */
+  dimensions: PropTypes.shape({
+    height: PropTypes.number,
+    width: PropTypes.number,
+  }),
+
+  /**
+   * Array of some combination of bannerSize and dimensions that are valid for the ad
+   * Example: ['mediumRectangle', { width: 320, height: 400 }, 'smartBannerPortrait']
+   */
+  adSizes: PropTypes.array,
+
+  /**
    * AdMob ad unit ID
    */
   adUnitID: PropTypes.string,
@@ -86,7 +120,6 @@ DFPBanner.propTypes = {
 };
 
 DFPBanner.defaultProps = {
-    bannerSize: 'smartBannerPortrait',
     didFailToReceiveAdWithError: () => {},
     admobDispatchAppEvent: () => {}
 };

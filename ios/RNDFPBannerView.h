@@ -8,11 +8,15 @@
 
 @class RCTEventDispatcher;
 
-@interface RNDFPBannerView : UIView <GADBannerViewDelegate>
+@interface RNDFPBannerView : UIView <GADBannerViewDelegate, GADAdSizeDelegate>
 
+@property (nonatomic, copy) NSArray *adSizes;
+@property (nonatomic, copy) NSDictionary *dimensions;
 @property (nonatomic, copy) NSString *bannerSize;
 @property (nonatomic, copy) NSString *adUnitID;
 @property (nonatomic, copy) NSString *testDeviceID;
+
+@property (nonatomic, copy) RCTBubblingEventBlock onWillChangeAdSizeTo;
 
 @property (nonatomic, copy) RCTBubblingEventBlock onSizeChange;
 @property (nonatomic, copy) RCTBubblingEventBlock onAdmobDispatchAppEvent;

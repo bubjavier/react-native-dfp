@@ -4,6 +4,8 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.ReadableArray;
+import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.common.MapBuilder;
 import com.facebook.react.uimanager.PixelUtil;
@@ -19,17 +21,22 @@ import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.doubleclick.PublisherAdView;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class RNDfpBannerViewManager extends SimpleViewManager<ReactViewGroup> implements AppEventListener {
 
   public static final String REACT_CLASS = "RNDFPBanner";
 
+  public static final String PROP_AD_SIZES = "adSizes";
+  public static final String PROP_DIMENSIONS = "dimensions";
   public static final String PROP_BANNER_SIZE = "bannerSize";
   public static final String PROP_AD_UNIT_ID = "adUnitID";
   public static final String PROP_TEST_DEVICE_ID = "testDeviceID";
 
   private String testDeviceID = null;
+  private String adUnitID = null;
 
   public enum Events {
     EVENT_SIZE_CHANGE("onSizeChange"),
@@ -155,51 +162,103 @@ public class RNDfpBannerViewManager extends SimpleViewManager<ReactViewGroup> im
     return builder.build();
   }
 
+  @ReactProp(name = PROP_AD_SIZES)
+  public void setAdSizes(final ReactViewGroup view, final ReadableArray adSizesProp) {
+    if (adSizesProp != null) {
+      ArrayList<AdSize> adSizesArrayList = new ArrayList<AdSize>();
+      for (Object obj : adSizesProp.toArrayList()) {
+        if (obj instanceof String) {
+          AdSize adSize = getAdSizeFromString((String)obj);
+          adSizesArrayList.add(adSize);
+        }
+
+        if (obj instanceof HashMap) {
+          HashMap dimensions = (HashMap)obj;
+          if (dimensions.containsKey("width") && dimensions.containsKey("height")) {
+
+            AdSize adSize = new AdSize(
+              (int) Double.parseDouble(dimensions.get("width").toString()),
+              (int) Double.parseDouble(dimensions.get("height").toString())
+            );
+            adSizesArrayList.add(adSize);
+          }
+        }
+      }
+
+      AdSize[] adSizes = adSizesArrayList.toArray(new AdSize[adSizesArrayList.size()]);
+
+      attachNewAdView(view);
+      PublisherAdView newAdView = (PublisherAdView) view.getChildAt(0);
+      newAdView.setAdSizes(adSizes);
+      newAdView.setAdUnitId(adUnitID);
+
+      // send measurements to js to style the AdView in react
+      WritableMap event = Arguments.createMap();
+      event.putDouble("width", newAdView.getAdSize().getWidth());
+      event.putDouble("height", newAdView.getAdSize().getHeight());
+      mEventEmitter.receiveEvent(view.getId(), Events.EVENT_SIZE_CHANGE.toString(), event);
+
+      loadAd(newAdView);
+    }
+  }
+
+  @ReactProp(name = PROP_DIMENSIONS)
+  public void setDimensions(final ReactViewGroup view, final ReadableMap dimensions) {
+    if (dimensions != null && dimensions.hasKey("width") && !dimensions.isNull("width") && dimensions.hasKey("height") && !dimensions.isNull("height")) {
+      AdSize adSize = new AdSize(dimensions.getInt("width"), dimensions.getInt("height"));
+      AdSize[] adSizes = new AdSize[1];
+      adSizes[0] = adSize;
+
+      attachNewAdView(view);
+      PublisherAdView newAdView = (PublisherAdView) view.getChildAt(0);
+      newAdView.setAdSizes(adSizes);
+      newAdView.setAdUnitId(adUnitID);
+
+      // send measurements to js to style the AdView in react
+      WritableMap event = Arguments.createMap();
+      event.putDouble("width", adSize.getWidth());
+      event.putDouble("height", adSize.getHeight());
+      mEventEmitter.receiveEvent(view.getId(), Events.EVENT_SIZE_CHANGE.toString(), event);
+
+      loadAd(newAdView);
+    }
+  }
+
   @ReactProp(name = PROP_BANNER_SIZE)
   public void setBannerSize(final ReactViewGroup view, final String sizeString) {
-    AdSize adSize = getAdSizeFromString(sizeString);
-    AdSize[] adSizes = new AdSize[1];
-    adSizes[0] = adSize;
+    if (sizeString != null && !sizeString.isEmpty()) {
+      AdSize adSize = getAdSizeFromString(sizeString);
+      AdSize[] adSizes = new AdSize[1];
+      adSizes[0] = adSize;
 
-    // store old ad unit ID (even if not yet present and thus null)
-    PublisherAdView oldAdView = (PublisherAdView) view.getChildAt(0);
-    String adUnitId = oldAdView.getAdUnitId();
+      attachNewAdView(view);
+      PublisherAdView newAdView = (PublisherAdView) view.getChildAt(0);
+      newAdView.setAdSizes(adSizes);
+      newAdView.setAdUnitId(adUnitID);
 
-    attachNewAdView(view);
-    PublisherAdView newAdView = (PublisherAdView) view.getChildAt(0);
-    newAdView.setAdSizes(adSizes);
-    newAdView.setAdUnitId(adUnitId);
+      // send measurements to js to style the AdView in react
+      int width;
+      int height;
+      WritableMap event = Arguments.createMap();
+      if (adSize == AdSize.SMART_BANNER) {
+        width = (int) PixelUtil.toDIPFromPixel(adSize.getWidthInPixels(mThemedReactContext));
+        height = (int) PixelUtil.toDIPFromPixel(adSize.getHeightInPixels(mThemedReactContext));
+      }
+      else {
+        width = adSize.getWidth();
+        height = adSize.getHeight();
+      }
+      event.putDouble("width", width);
+      event.putDouble("height", height);
+      mEventEmitter.receiveEvent(view.getId(), Events.EVENT_SIZE_CHANGE.toString(), event);
 
-    // send measurements to js to style the AdView in react
-    int width;
-    int height;
-    WritableMap event = Arguments.createMap();
-    if (adSize == AdSize.SMART_BANNER) {
-      width = (int) PixelUtil.toDIPFromPixel(adSize.getWidthInPixels(mThemedReactContext));
-      height = (int) PixelUtil.toDIPFromPixel(adSize.getHeightInPixels(mThemedReactContext));
+      loadAd(newAdView);
     }
-    else {
-      width = adSize.getWidth();
-      height = adSize.getHeight();
-    }
-    event.putDouble("width", width);
-    event.putDouble("height", height);
-    mEventEmitter.receiveEvent(view.getId(), Events.EVENT_SIZE_CHANGE.toString(), event);
-
-    loadAd(newAdView);
   }
 
   @ReactProp(name = PROP_AD_UNIT_ID)
   public void setAdUnitID(final ReactViewGroup view, final String adUnitID) {
-    // store old banner size (even if not yet present and thus null)
-    PublisherAdView oldAdView = (PublisherAdView) view.getChildAt(0);
-    AdSize[] adSizes = oldAdView.getAdSizes();
-
-    attachNewAdView(view);
-    PublisherAdView newAdView = (PublisherAdView) view.getChildAt(0);
-    newAdView.setAdUnitId(adUnitID);
-    newAdView.setAdSizes(adSizes);
-    loadAd(newAdView);
+    this.adUnitID = adUnitID;
   }
 
   @ReactProp(name = PROP_TEST_DEVICE_ID)
@@ -208,7 +267,12 @@ public class RNDfpBannerViewManager extends SimpleViewManager<ReactViewGroup> im
   }
 
   private void loadAd(final PublisherAdView adView) {
-    if (adView.getAdSizes() != null && adView.getAdUnitId() != null) {
+    if (adView.getAdSizes() != null && adUnitID != null) {
+
+      if (adUnitID != adView.getAdUnitId()) {
+        adView.setAdUnitId(adUnitID);
+      }
+
       PublisherAdRequest.Builder adRequestBuilder = new PublisherAdRequest.Builder();
       if (testDeviceID != null){
         if (testDeviceID.equals("EMULATOR")) {
@@ -221,7 +285,6 @@ public class RNDfpBannerViewManager extends SimpleViewManager<ReactViewGroup> im
       adView.loadAd(adRequest);
     }
   }
-
 
   private AdSize getAdSizeFromString(String adSize) {
     switch (adSize) {

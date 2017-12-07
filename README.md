@@ -66,6 +66,7 @@ import { RNBanner } from 'react-native-dfp';
   onAdmobDispatchAppEvent={(event) => admobDispatchAppEvent(event)}
   testDeviceID={testDeviceID}
   adUnitID={adUnitID}
+  dimensions={dimensions}
   bannerSize={bannerSize} />
 
 ```
@@ -86,6 +87,14 @@ import { RNBanner } from 'react-native-dfp';
  * banner is default
  */
 bannerSize: React.PropTypes.string,
+
+/**
+ * Custom banner size (instead of using bannerSize)
+ */
+dimensions: PropTypes.shape({
+  height: PropTypes.number,
+  width: PropTypes.number,
+}),
 
 /**
  * DFP ad unit ID
