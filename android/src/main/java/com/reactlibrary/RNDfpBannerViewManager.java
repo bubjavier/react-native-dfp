@@ -6,19 +6,19 @@ import android.util.Log;
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
+import com.facebook.react.bridge.ReadableNativeArray;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.common.MapBuilder;
 import com.facebook.react.uimanager.PixelUtil;
-import com.facebook.react.uimanager.annotations.ReactProp;
 import com.facebook.react.uimanager.SimpleViewManager;
 import com.facebook.react.uimanager.ThemedReactContext;
+import com.facebook.react.uimanager.annotations.ReactProp;
 import com.facebook.react.uimanager.events.RCTEventEmitter;
 import com.facebook.react.views.view.ReactViewGroup;
 import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.doubleclick.AppEventListener;
 import com.google.android.gms.ads.doubleclick.PublisherAdRequest;
-import com.google.android.gms.ads.AdSize;
-import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.doubleclick.PublisherAdView;
 
 import java.util.ArrayList;
@@ -166,7 +166,8 @@ public class RNDfpBannerViewManager extends SimpleViewManager<ReactViewGroup> im
   public void setAdSizes(final ReactViewGroup view, final ReadableArray adSizesProp) {
     if (adSizesProp != null) {
       ArrayList<AdSize> adSizesArrayList = new ArrayList<AdSize>();
-      for (Object obj : adSizesProp.toArrayList()) {
+      ReadableNativeArray nativeadSizesArray = (ReadableNativeArray)adSizesProp;
+      for (Object obj : nativeadSizesArray.toArrayList()) {
         if (obj instanceof String) {
           AdSize adSize = getAdSizeFromString((String)obj);
           adSizesArrayList.add(adSize);
