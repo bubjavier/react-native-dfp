@@ -13,7 +13,7 @@ export default class DFPBanner extends React.Component {
   constructor() {
     super();
     this.onSizeChange = this.onSizeChange.bind(this);
-    this.didFailToReceiveAdWithError = this.didFailToReceiveAdWithError.bind(this);
+    this.onDidFailToReceiveAdWithError = this.onDidFailToReceiveAdWithError.bind(this);
     this.onAdmobDispatchAppEvent = this.onAdmobDispatchAppEvent.bind(this);
     this.state = {
       style: {},
@@ -63,7 +63,7 @@ export default class DFPBanner extends React.Component {
           style={this.state.style}
           onSizeChange={this.onSizeChange}
           onAdViewDidReceiveAd={this.props.adViewDidReceiveAd}
-          onDidFailToReceiveAdWithError={this.didFailToReceiveAdWithError}
+          onDidFailToReceiveAdWithError={this.onDidFailToReceiveAdWithError}
           onAdViewWillPresentScreen={this.props.adViewWillPresentScreen}
           onAdViewWillDismissScreen={this.props.adViewWillDismissScreen}
           onAdViewDidDismissScreen={this.props.adViewDidDismissScreen}
