@@ -12,18 +12,32 @@ export default class DFPBanner extends React.Component {
   constructor() {
     super();
     this.onSizeChange = this.onSizeChange.bind(this);
+    this.didFailToReceiveAdWithError = this.didFailToReceiveAdWithError.bind(this);
+    this.onAdmobDispatchAppEvent = this.onAdmobDispatchAppEvent.bind(this);
     this.state = {
       style: {},
     };
   }
 
-  onSizeChange(event) {
-    const { height, width } = event.nativeEvent;
+  onSizeChange({nativeEvent}) {
+    const { height, width } = nativeEvent;
     this.setState({ style: { width, height } });
+  }
+  
+  onDidFailToReceiveAdWithError({nativeEvent}) {
+    if (this.props.didFailToReceiveAdWithError) {
+      this.props.didFailToReceiveAdWithError( nativeEvent.error );
+    }
+  }
+  
+  onAdmobDispatchAppEvent(event) {
+    if (this.props.admobDispatchAppEvent) {
+      this.props.admobDispatchAppEvent(event);
+    }
   }
 
   render() {
-    const { adUnitID, testDeviceID, dimensions, style, didFailToReceiveAdWithError, admobDispatchAppEvent } = this.props;
+    const { adUnitID, testDeviceID, dimensions, style } = this.props;
     let { bannerSize, adSizes } = this.props;
 
     // Dimensions gets highest priority
@@ -46,14 +60,14 @@ export default class DFPBanner extends React.Component {
       <View style={this.props.style}>
         <RNBanner
           style={this.state.style}
-          onSizeChange={this.onSizeChange.bind(this)}
+          onSizeChange={this.onSizeChange}
           onAdViewDidReceiveAd={this.props.adViewDidReceiveAd}
-          onDidFailToReceiveAdWithError={(event) => didFailToReceiveAdWithError(event.nativeEvent.error)}
+          onDidFailToReceiveAdWithError={this.didFailToReceiveAdWithError}
           onAdViewWillPresentScreen={this.props.adViewWillPresentScreen}
           onAdViewWillDismissScreen={this.props.adViewWillDismissScreen}
           onAdViewDidDismissScreen={this.props.adViewDidDismissScreen}
           onAdViewWillLeaveApplication={this.props.adViewWillLeaveApplication}
-          onAdmobDispatchAppEvent={(event) => admobDispatchAppEvent(event)}
+          onAdmobDispatchAppEvent={this.onAdmobDispatchAppEvent}
           adSizes={adSizes}
           dimensions={dimensions}
           testDeviceID={testDeviceID}
@@ -117,9 +131,4 @@ DFPBanner.propTypes = {
   adViewWillLeaveApplication: PropTypes.func,
   admobDispatchAppEvent: PropTypes.func,
   // ...View.propTypes,
-};
-
-DFPBanner.defaultProps = {
-    didFailToReceiveAdWithError: () => {},
-    admobDispatchAppEvent: () => {}
 };
