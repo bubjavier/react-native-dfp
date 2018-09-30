@@ -1,9 +1,10 @@
 import React from 'react';
 import {
   requireNativeComponent,
+  ViewPropTypes,
   View,
 } from 'react-native';
-import PropTypes from 'proptypes';
+import PropTypes from 'prop-types';
 
 const RNBanner = requireNativeComponent('RNDFPBanner', DFPBanner);
 
@@ -79,7 +80,8 @@ export default class DFPBanner extends React.Component {
 }
 
 DFPBanner.propTypes = {
-  // style: View.propTypes.style,
+
+  style: ViewPropTypes.style,
 
   /**
    * AdMob iOS library banner size constants

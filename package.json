@@ -1,6 +1,6 @@
 {
   "name": "react-native-dfp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "React Native bridge for Google DFP",
   "main": "index.js",
   "scripts": {
@@ -17,6 +17,6 @@
     "react-native-windows": "0.41.0-rc.1"
   },
   "dependencies": {
-    "proptypes": "^1.1.0"
+    "prop-types": "^15.6.2"
   }
 }
